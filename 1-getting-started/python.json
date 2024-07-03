@@ -1,0 +1,44 @@
+{
+    "conditions": {
+        "executortype": "container-executor",
+        "executornames": [
+            "dev-docker"
+        ],
+        "nodes": 1,
+        "processes-per-node": 1,
+        "mem": "10Gi",
+        "cpu": "1000m",
+        "gpu": {
+            "count": 0
+        },
+        "walltime": 60
+    },
+    "funcname": "execute",
+    "kwargs": {
+        "cmd": "python3",
+        "docker-image": "python",
+         "args": [
+            "/cfs/src/helloworld.py"
+        ]
+    },
+    "maxexectime": 55,
+    "maxretries": 3,
+    "fs": {
+        "mount": "/cfs",
+        "dirs": [
+            {
+                "label": "/src",
+                "dir": "/src",
+                "keepfiles": false,
+                "onconflicts": {
+                    "onstart": {
+                        "keeplocal": false
+                    },
+                    "onclose": {
+                        "keeplocal": false
+                    }
+                }
+            }
+        ]
+    }
+}

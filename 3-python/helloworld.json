@@ -1,0 +1,7 @@
+{
+    "conditions": {
+        "executortype": "helloworld-executor"
+    },
+    "funcname": "helloworld"
+}
+

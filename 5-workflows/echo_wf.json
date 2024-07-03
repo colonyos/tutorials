@@ -1,0 +1,109 @@
+[
+    {
+        "nodename": "task_a",
+        "funcname": "execute",
+    	"kwargs": {
+        	"cmd": "echo A",
+        	"docker-image": "ubuntu:20.04"
+    	},
+    	"maxexectime": 55,
+    	"maxretries": 3,
+        "conditions": {
+            "executortype": "container-executor",
+   	        "executornames": [
+            	"dev-docker"
+        	],
+            "dependencies": [],
+            "nodes": 1,
+            "processes-per-node": 1,
+            "mem": "10Gi",
+            "cpu": "1000m",
+            "gpu": {
+            	"count": 0
+            },
+        	"walltime": 60
+        }
+    },
+    {
+        "nodename": "task_b",
+        "funcname": "execute",
+    	"kwargs": {
+        	"cmd": "echo B",
+        	"docker-image": "ubuntu:20.04"
+    	},
+    	"maxexectime": 55,
+    	"maxretries": 3,
+        "conditions": {
+            "executortype": "container-executor",
+   	        "executornames": [
+            	"dev-docker"
+        	],
+            "dependencies": [
+                "task_a"
+            ],
+            "nodes": 1,
+            "processes-per-node": 1,
+            "mem": "10Gi",
+            "cpu": "1000m",
+            "gpu": {
+            	"count": 0
+            },
+        	"walltime": 60
+        }
+    },
+    {
+        "nodename": "task_c",
+        "funcname": "execute",
+    	"kwargs": {
+        	"cmd": "echo C",
+        	"docker-image": "ubuntu:20.04"
+    	},
+    	"maxexectime": 55,
+    	"maxretries": 3,
+        "conditions": {
+            "executortype": "container-executor",
+   	        "executornames": [
+            	"dev-docker"
+        	],
+            "dependencies": [
+                "task_a"
+            ],
+            "nodes": 1,
+            "processes-per-node": 1,
+            "mem": "10Gi",
+            "cpu": "1000m",
+            "gpu": {
+            	"count": 0
+            },
+        	"walltime": 60
+        }
+    },
+    {
+        "nodename": "task_d",
+        "funcname": "execute",
+    	"kwargs": {
+        	"cmd": "echo D",
+        	"docker-image": "ubuntu:20.04"
+    	},
+    	"maxexectime": 55,
+    	"maxretries": 3,
+        "conditions": {
+            "executortype": "container-executor",
+   	        "executornames": [
+            	"dev-docker"
+        	],
+            "dependencies": [
+                "task_b",
+                "task_c"
+            ],
+            "nodes": 1,
+            "processes-per-node": 1,
+            "mem": "10Gi",
+            "cpu": "1000m",
+            "gpu": {
+            	"count": 0
+            },
+        	"walltime": 60
+        }
+    }
+]

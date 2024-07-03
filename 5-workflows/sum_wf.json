@@ -1,0 +1,20 @@
+[
+    {
+        "nodename": "gen_node",
+        "funcname": "gen",
+        "conditions": {
+            "executortype": "wf-executor",
+            "dependencies": []
+        }
+    },
+    {
+        "nodename": "sum_node",
+        "funcname": "sum",
+        "conditions": {
+            "executortype": "wf-executor",
+            "dependencies": [
+                "gen_node"
+            ]
+        }
+    }
+]

@@ -1,0 +1,10 @@
+{
+    "conditions": {
+        "executortype": "faas-executor"
+    },
+    "funcname": "execute",
+    "kwargs": {
+        "function": "convert",
+        "arg": "21"
+    }
+}

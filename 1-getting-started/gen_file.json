@@ -1,0 +1,41 @@
+{
+     "conditions": {
+         "executortype": "container-executor",
+         "executornames": [
+             "dev-docker"
+         ],
+         "nodes": 1,
+         "processes-per-node": 1,
+         "mem": "10Gi",
+         "cpu": "1000m",
+         "gpu": {
+             "count": 0
+         },
+         "walltime": 60
+     },
+     "funcname": "execute",
+     "kwargs": {
+         "cmd": "echo 'process says hi!' >> /cfs/output/result.txt",
+         "docker-image": "ubuntu:20.04"
+     },
+     "maxexectime": 55,
+     "maxretries": 3,
+     "fs": {
+         "mount": "/cfs",
+         "dirs": [
+             {
+                 "label": "/output",
+                 "dir": "/output",
+                 "keepfiles": false,
+                 "onconflicts": {
+                     "onstart": {
+                         "keeplocal": false
+                     },
+                     "onclose": {
+                         "keeplocal": true
+                     }
+                 }
+             }
+         ]
+     }
+}
