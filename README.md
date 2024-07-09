@@ -1,6 +1,6 @@
 # Introduction
 
-This repo contains several tutorials to help you get started with ColonyOS, an open-source meta-operating system (middleware) developed by RISE AB. ColonyOS provides a unified programming model to execute workloads across diverse platforms, from traditional cloud infrastructures and HPC to emergent edge platforms. 
+This repo contains several tutorials to help you get started with ColonyOS, an open-source meta-operating system developed by RISE AB. ColonyOS provides a unified programming model to execute workloads across diverse platforms, from traditional cloud infrastructures and HPC to emergent edge platforms. 
 
 1. [Getting started](1-getting-started/tutorial.md)
     - This is an introductory tutorial that will guide you through the initial setup and basic operations.
