@@ -76,7 +76,7 @@ The *cpu*, *mem*, and *gpu* parameters must be set but are not utilized by the D
             "dev-docker"
         ],
         "nodes": 1,
-        "processes-per-node": 1,
+        "processespernode": 1,
         "mem": "10Gi",
         "cpu": "1000m",
         "gpu": {

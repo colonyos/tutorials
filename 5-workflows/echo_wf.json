@@ -15,7 +15,7 @@
         	],
             "dependencies": [],
             "nodes": 1,
-            "processes-per-node": 1,
+            "processespernode": 1,
             "mem": "10Gi",
             "cpu": "1000m",
             "gpu": {
@@ -42,7 +42,7 @@
                 "task_a"
             ],
             "nodes": 1,
-            "processes-per-node": 1,
+            "processespernode": 1,
             "mem": "10Gi",
             "cpu": "1000m",
             "gpu": {
@@ -69,7 +69,7 @@
                 "task_a"
             ],
             "nodes": 1,
-            "processes-per-node": 1,
+            "processespernode": 1,
             "mem": "10Gi",
             "cpu": "1000m",
             "gpu": {
@@ -97,7 +97,7 @@
                 "task_c"
             ],
             "nodes": 1,
-            "processes-per-node": 1,
+            "processespernode": 1,
             "mem": "10Gi",
             "cpu": "1000m",
             "gpu": {

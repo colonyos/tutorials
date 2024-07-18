@@ -126,7 +126,7 @@ Let's submit a job that process the *myfile.txt* file. The *fs* block in the JSO
             "dev-docker"
         ],
         "nodes": 1,
-        "processes-per-node": 1,
+        "processespernode": 1,
         "mem": "10Gi",
         "cpu": "1000m",
         "gpu": {
@@ -188,7 +188,7 @@ It is also possible for a process to generate data. Note that *keeplocal* on *on
             "dev-docker"
         ],
         "nodes": 1,
-        "processes-per-node": 1,
+        "processespernode": 1,
         "mem": "10Gi",
         "cpu": "1000m",
         "gpu": {
@@ -306,7 +306,7 @@ colonies fs label ls                                             13:52:33
             "dev-docker"
         ],
         "nodes": 1,
-        "processes-per-node": 1,
+        "processespernode": 1,
         "mem": "10Gi",
         "cpu": "1000m",
         "gpu": {
@@ -392,7 +392,7 @@ Let's modify the JSON to use snapshots instead of syncing directories.
             "dev-docker"
         ],
         "nodes": 1,
-        "processes-per-node": 1,
+        "processespernode": 1,
         "mem": "10Gi",
         "cpu": "1000m",
         "gpu": {
@@ -449,7 +449,7 @@ Instead of manually creating snapshots, the Colonies CLI can automatically creat
             "dev-docker"
         ],
         "nodes": 1,
-        "processes-per-node": 1,
+        "processespernode": 1,
         "mem": "10Gi",
         "cpu": "1000m",
         "gpu": {

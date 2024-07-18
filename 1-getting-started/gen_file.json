@@ -5,7 +5,7 @@
              "dev-docker"
          ],
          "nodes": 1,
-         "processes-per-node": 1,
+         "processespernode": 1,
          "mem": "10Gi",
          "cpu": "1000m",
          "gpu": {
