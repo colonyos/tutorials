@@ -24,12 +24,12 @@ The resulting dataset will contain three main columns:
 Below is an example of the dataset:
 
 | time  | normal_wave | abnormal_wave | is_anomaly |
-| ----- | ---------- -| ------------- | ---------- | 
-| 0.001	| 325  	      | 325	          | 0          |
-| 0.002 | 324	      | 324	          | 0          |
-| 0.003	| 322	      | 58	          | 1          |
-| 0.004	| 319	      | 55	          | 1          |
-| 0.005	| 315	      | 315	          | 0          |
+|-------|-------------|---------------|------------|
+| 0.001 | 325         | 325           | 0          |
+| 0.002 | 324         | 324           | 0          |
+| 0.003 | 322         | 258           | 1          |
+| 0.004 | 319         | 255           | 1          |
+| 0.005 | 315         | 315           | 0          |
 
 In this table, the Abnormal Wave column shows the effect of an anomaly at time 0.003s and 0.004s, where the voltage dropped significantly. The corresponding entries in the Anomaly Label column are set to 1 to indicate the presence of an anomaly.
 
