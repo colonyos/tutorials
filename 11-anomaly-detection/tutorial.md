@@ -152,5 +152,4 @@ print(f"Anomaly detected: {anomaly_detected}")
 print(f"KL Divergence: {kl_divergence}")
 ```
 
-The next step is to split the code into several components: one where the client generates a sample, and another where a job is created and sent to an executor that performs anomaly detection.
-Let's create a simple 
+The next step is to split the code into several components: one where the client generates a sample, store it a database/memory, generate a job which is picked up by executor that performs anomaly detection, and finally update the database with the result.
