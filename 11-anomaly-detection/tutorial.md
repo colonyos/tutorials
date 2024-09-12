@@ -40,7 +40,7 @@ To generate the dataset, run:
 python gen_dataset.py
 ```
 
-The script will create a file, called *
+The script will create a file, called *dataset.csv*.
 
 ## Detecting anomalies
 We are going to use a very simple method to detect anomalies based on **Kullback-Leibler (KL) divergence**. KL divergence measures how one probability distribution differs from a reference distribution, thus making useful to detect anomalies in time-series data.
@@ -48,10 +48,10 @@ We are going to use a very simple method to detect anomalies based on **Kullback
 In our case, we will treat the normal signal as our reference distribution and the potentially anomalous signal as the second distribution. By comparing these two distributions, we can 
 calculate how much the abnormal signal deviates from what we expect under normal conditions.
 
-## KL Divergence Formula
+## KL divergence
 The KL divergence between two probability distributions *P* (the reference distribution) and *Q* (the observed distribution) is calculated as follows:
 
-<img src="kl_div.png">
+<img src="kl_div.png" width="300">
 
 Where:
 - *P(i)* is the probability of the signal in the normal distribution at bin *i*,
@@ -60,10 +60,20 @@ Where:
 
 KL divergence essentially tells us how much information is lost when one distribution (the normal signal) is used to approximate another distribution (the abnormal signal). A higher KL divergence value means that the abnormal signal is significantly different from the normal one, and this difference could be indicative of an anomaly.
 
-
-
-
+Run the Python script below to investigare how the KL divergence performs on the training dataset.
 
 ```bash
-TODO
+python3 kl_div.py
 ```
+
+<img src="kl_div_res.png">
+
+```bash
+Anomaly detection threshold (KL Divergence): 0.010199148586751076
+Accuracy: 1.0000
+Precision: 1.0000
+Recall: 1.0000
+F1-Score: 1.0000
+```
+
+F1-Score of 1.0000 indicates perfect precision and recall, meaning the model did not make any classification errors.
