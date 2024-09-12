@@ -58,9 +58,9 @@ Where:
 - *Q(i)* is the probability of the signal in the abnormal distribution at bin  *i*,
 - *log P(i)/Q(i)* measures the divergence between the two distributions for each bin.
 
-KL divergence essentially tells us how much information is lost when one distribution (the normal signal) is used to approximate another distribution (the abnormal signal). A higher KL divergence value means that the abnormal signal is significantly different from the normal one, and this difference could be indicative of an anomaly.
+KL divergence essentially tells us how much information is lost when one distribution (the normal signal) is used to approximate another distribution (the abnormal signal). A higher KL divergence value means that the abnormal signal is significantly different from the normal one, and this difference could be indicative of an anomaly. By setting a threshold, we can define a boundary that distinguishes normal behavior from anomalous behavior. If the KL divergence value exceeds this threshold, it indicates that the difference between the normal and abnormal signals is significant enough to be considered an anomaly. 
 
-Run the Python script below to investigare how the KL divergence performs on the training dataset.
+Run the Python script below to calculate a suitable threshold value based on the training dataset.
 
 ```bash
 python3 kl_div.py
@@ -76,4 +76,51 @@ Recall: 1.0000
 F1-Score: 1.0000
 ```
 
-F1-Score of 1.0000 indicates perfect precision and recall, meaning the model did not make any classification errors.
+F1-Score of 1.0000 indicates perfect precision and recall, meaning the model did not make any classification errors. Also, 0.010199148586751076 seems to be a good threshold.
+The code below generates a sample and then tests if it contains an anomaly. 
+The next step is to split the code into several components: one where the client generates a sample, and another where a job is created and sent to an executor that performs anomaly detection.
+
+```python
+import numpy as np
+import pandas as pd
+from scipy.stats import entropy
+
+reference_wave_global = None
+
+def set_reference_wave(reference_wave):
+    global reference_wave_global
+    reference_wave_global = reference_wave
+
+def compute_histogram(data, bins=50):
+    hist, bin_edges = np.histogram(data, bins=bins, density=True)
+    hist = hist + 1e-10  # Avoid division by zero
+    return hist, bin_edges
+
+def compute_kl_divergence(p, q):
+    return entropy(p, q)
+
+def detect_anomaly(sample_wave, kl_threshold=0.010199148586751076):
+    global reference_wave_global
+    
+    if reference_wave_global is None:
+        raise ValueError("Reference wave has not been set. Use 'set_reference_wave()' to set the reference.")
+
+    sample_hist, _ = compute_histogram(sample_wave)
+    reference_hist, _ = compute_histogram(reference_wave_global)
+    kl_div = compute_kl_divergence(reference_hist, sample_hist)
+    anomaly_detected = kl_div > kl_threshold
+    
+    return anomaly_detected, kl_div
+
+sample_df = generate_single_sample(duration=1, sampling_rate=1000, frequency=50, amplitude=230, 
+                                   anomaly_probability=0.001, anomaly_duration=100, anomaly_drop=0.2)
+
+reference_wave = sample_df['normal_wave'].values
+set_reference_wave(reference_wave)
+
+sample_wave = sample_df['anomaly_wave'].values
+anomaly_detected, kl_divergence = detect_anomaly(sample_wave)
+
+print(f"Anomaly detected: {anomaly_detected}")
+print(f"KL Divergence: {kl_divergence}")
+```
