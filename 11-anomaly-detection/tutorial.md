@@ -79,7 +79,6 @@ F1-Score: 1.0000
 F1-Score of 1.0000 indicates perfect precision and recall, meaning the model did not make any classification errors. Also, 0.010199148586751076 seems to be a good threshold.
 The code below generates a sample and then tests if it contains an anomaly. 
 
-
 ```python
 import numpy as np
 import pandas as pd
@@ -153,3 +152,16 @@ print(f"KL Divergence: {kl_divergence}")
 ```
 
 The next step is to split the code into several components: one where the client generates a sample, store it a database/memory, generate a job which is picked up by executor that performs anomaly detection, and finally update the database with the result.
+
+## Database
+Let's implement first implement an in-memory database with a REST API to stores samples.
+
+```bash
+pip install fastapi uvicorn pandas
+```
+
+POST /store/: Stores time series data (time-value pairs) and metadata (anomaly status) based on process_id.
+GET /get_timeseries/{process_id}: Retrieves the time series data and metadata using the process_id.
+GET /list_timeseries/: Lists all stored time series data and their associated metadata (process_id and anomaly status).
+PUT /update_timeseries/{process_id}: Updates the anomaly status of the time series data by process_id.
+DELETE /delete_timeseries/{process_id}: Deletes the time series data using process_id.
