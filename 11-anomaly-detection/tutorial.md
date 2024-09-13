@@ -78,7 +78,7 @@ Recall: 1.0000
 F1-Score: 1.0000
 ```
 
-F1-Score of 1.0000 indicates perfect precision and recall, meaning the model did not make any classification errors at all. Hence, 0.010199148586751076 seems to be a good threshold.
+F1-Score of 1.0000 indicates perfect precision and recall, meaning the model did not make any classification errors at all. Hence, 0.010199148586751076 seems to be a good threshold value.
 
 The code below generates a sample and tests if it contains an anomaly. 
 
@@ -206,7 +206,7 @@ curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies_only=false'
 ```
 
 ```json
-{"timeseries":[{"ts_id":"1234","process_id":null,"anomaly":false}]}⏎
+{"timeseries":[{"ts_id":"1234","process_id":null,"anomaly":false}]}
 ```
 
 Now, let's develop a Python script that fetches the process with ID 1234, checks if it contains an anomaly, and updates the database accordingly.
@@ -226,7 +226,7 @@ curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies_only=true'
 ```
 
 ```json
-{"timeseries":[{"ts_id":"1234","process_id":"5678","anomaly":true}]}⏎
+{"timeseries":[{"ts_id":"1234","process_id":"5678","anomaly":true}]}
 ```
 
 # ColonyOS
