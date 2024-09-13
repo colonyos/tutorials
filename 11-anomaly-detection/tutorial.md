@@ -19,8 +19,8 @@ Below is the explanation of the key parameters:
 The resulting dataset will contain three main columns:
 
 * **time**: The time index for each sample.
-* **normal_wave**: The sinusoidal wave timeseries representing normal operation.
-* **anomaly_wave**: The wave timeseries with injected anomalies.
+* **normal_wave**: The sinusoidal wave time series representing normal operation.
+* **anomaly_wave**: The wave time series with injected anomalies.
 * **is_anomaly**: A label indicating if the sample contains an anomaly (1) or not (0).
 
 Below is an example of the dataset:
@@ -34,6 +34,7 @@ Below is an example of the dataset:
 | 0.005 | 315         | 315           | 0          |
 
 In this table, the abnormal wave column shows the effect of an anomaly at time 0.003s and 0.004s, where the voltage dropped significantly. The corresponding entries in the anomaly label column are set to 1 to indicate the presence of an anomaly. Below is a picture showing 2 anomalies where the power has dropped.
+
 <img src="anomalies.png">
 
 To generate the dataset, run:
@@ -77,8 +78,9 @@ Recall: 1.0000
 F1-Score: 1.0000
 ```
 
-F1-Score of 1.0000 indicates perfect precision and recall, meaning the model did not make any classification errors. Hence, 0.010199148586751076 seems to be a good threshold.
-The code below generates a sample and then tests if it contains an anomaly. 
+F1-Score of 1.0000 indicates perfect precision and recall, meaning the model did not make any classification errors at all. Hence, 0.010199148586751076 seems to be a good threshold.
+
+The code below generates a sample and tests if it contains an anomaly. 
 
 ```python
 import numpy as np
@@ -194,17 +196,17 @@ python3 upload_sample_test.py
 ```
 
 ```bash
-Anomaly detected at index: 612
+Anomaly detected at index: 489
 Sample waveform stored successfully.
 ```
 
-To list all timeseries, type: 
+To list all time series, type: 
 ```bash
 curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies_only=false'
 ```
 
 ```json
-{"timeseries":[{"process_id":"1234","anomaly":false}]}⏎
+{"timeseries":[{"ts_id":"1234","process_id":null,"anomaly":false}]}⏎
 ```
 
 Now, let's develop a Python script that fetches the process with ID 1234, checks if it contains an anomaly, and updates the database accordingly.
@@ -215,26 +217,130 @@ python3 anomaly_detector_backend_test.py
 
 ```bash
 Anomaly detected! KL Divergence: 0.09482433169355574
-Database updated successfully. Process ID: 1234, Anomaly: True
+Database updated successfully. Timeseries ID: 1234, Anomaly: True, Process ID: 5678
 ```
 
 Let's check the database to see if the anomaly label has been updated.
 ```bash
-curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies_only=false'
+curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies_only=true'
 ```
 
 ```json
-{"timeseries":[{"process_id":"1234","anomaly":true}]}⏎
+{"timeseries":[{"ts_id":"1234","process_id":"5678","anomaly":true}]}⏎
 ```
 
 # ColonyOS
 We are now going to explore several methods to build a scalable and resilient compute platform using ColonyOS.
 
-* Dedicated executor
+* Anomaly Python executor
 * Container executor
 * Container executor with generators
 
-Let's first explore how to build a dedicated executor
+Let's first explore how to build a Python executor.
 
-## Dedicator executor
+## Anomaly Python executor
+We are going to develop a custom anomaly detection executor in Python, which will receive process assignments from the Colonies server. These processes will contain metadata about time series that should be checked for anomalies. The main advantage of a custom executor is performance, as it directly runs Python code without the need to spawn containers. Spawning containers can sometimes be very slow, for example on large Kubernetes clusters. As a result, custom executors is particularly well-suited for stream processing use cases, where small jobs need to be processed quickly.
 
+However, scaling can be more complex, as additional executors must be deployed manually to handle higher workloads. This approach also lacks compatibility with HPC systems, which only support container executors.
+
+Below is an overview of the system we are going to develop. The submit.py script will generate a sample waveform, assign a unique ID to the time series, upload it to the database backend, and submit a function specification to the Colonies server. The executor will then receive a process assignment, retrieve the time series ID from the function specification, fetch the time series from the database, detect anomalies, update the database, and finally close the process.
+
+<img src="python_executor.png">
+
+First let's start a database backend server.
+```bash
+python3 python3 backend.py
+```
+
+In another terminal, start the executor. Remeber to source the *docker-compose.env* file to load all credentials.
+```bash
+source docker-compose.env;
+python3 python3 executor.py
+```
+
+### Submit time series anomaly detection jobs
+Start yet another terminal to generate a time series to be checked for anomalies.
+
+```bash
+python3 submit.py 
+```
+
+```bash
+-> Generating sample data
+Anomaly detected at index: 787
+-> Adding time series with ID: e67e0a21b1a19ab10395091b04354698312dfe2e89a6c331c4f86cc715126dcd to the database
+Sample waveform stored successfully.
+-> Submitting ColonyOS function spec
+Process 330de7374daf974498ff86201fd8aea78f41731e06eb0c0bc621425a9b0ad19d submitted
+```
+
+If the time series contains anomalies, we should be able to list them by typing:
+
+```bash
+curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies=true'
+```
+
+```json
+{"timeseries":[{"ts_id":"e67e0a21b1a19ab10395091b04354698312dfe2e89a6c331c4f86cc715126dcd","process_id":"5678","anomaly":true}]}
+```
+
+Change the *anomalies* to false to list time series without anomalies.
+
+```bash
+curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies=false'
+```
+
+Stop the executor by pressing ctrl-c, and then run the submit script a couple of times. Then type: 
+
+```bash
+colonies process psw
+```
+
+```bash
+╭──────────┬─────────────────────────┬─────────────────────────┬─────────────────────┬───────────────┬──────────────────┬───────────┬───────╮
+│ FUNCNAME │ ARGS                    │ KWARGS                  │ SUBMSSION TIME      │ EXECUTOR NAME │ EXECUTOR TYPE    │ INITIATOR │ LABEL │
+├──────────┼─────────────────────────┼─────────────────────────┼─────────────────────┼───────────────┼──────────────────┼───────────┼───────┤
+│ anomaly  │ 2fa16f6fe395e98d5293... │ db:http://127.0.0.1:... │ 2024-09-13 12:03:───────┴──────────────────┴───────────┴───────╯
+```
+
+If no anomaly detection executor is available, the processes will be queued until a matching executor becomes available. Once the executor is started again, it will begin processing all pending time series jobs. You can also start more than one executor, and the workload will be automatically load-balanced between the available executors.
+
+### Checking logs
+The executor code contains several *add_log* function calls, which upload logs to the Colonies server.
+
+```python
+logMsg = f"Checking anomalies in time series with ID: {ts_ids}"
+self.colonies.add_log(process.processid, logMsg, self.executor_prvkey)
+```
+
+Let's search for the key word *Anom*.
+
+```bash
+colonies log search --text "Anom"             12:06:58
+```
+
+```bash
+INFO[0000] Searching for logs                            Count=20 Days=1 Text=Anom
+╭──────────────┬──────────────────────────────────────────────────────────────────╮
+│ Timestamp    │ 2024-09-13 11:17:11                                              │
+│ ExecutorName │ anomaly-executor                                                 │
+│ ProcessID    │ 5e799b8ca37abbc5b79fa8a029f9395f37feb35ee6a44889d7d08cf9b43d7eec │
+│ Text         │ Anomaly detected! KL Divergence: 0.20082905120266065, timeseries │
+│              │ ID:                                                              │
+│              │ 4c98f38a2b86e183d41a96728c8fb08867ea18c700a9de21545e0e03f48dffbc │
+╰──────────────┴──────────────────────────────────────────────────────────────────╯
+╭──────────────┬──────────────────────────────────────────────────────────────────╮
+│ Timestamp    │ 2024-09-13 11:17:11                                              │
+│ ExecutorName │ anomaly-executor                                                 │
+│ ProcessID    │ 5e799b8ca37abbc5b79fa8a029f9395f37feb35ee6a44889d7d08cf9b43d7eec │
+│ Text         │ Anomaly detected! KL Divergence: 0.20082905120266065, timeseries │
+│              │ ID:                                                              │
+│              │ 4c98f38a2b86e183d41a96728c8fb08867ea18c700a9de21545e0e03f48dffbc │
+╰──────────────┴──────────────────────────────────────────────────────────────────╯
+```
+
+To retreive full logs for a specific process, type:
+
+```bash
+colonies log get -p 5e799b8ca37abbc5b79fa8a029f9395f37feb35ee6a44889d7d08cf9b43d7eec
+```

@@ -32,27 +32,22 @@ def generate_single_sample(duration=1, sampling_rate=1000, frequency=50, amplitu
     return pd.DataFrame(data)
 
 
-# Generate a sample waveform
 sample_df = generate_single_sample(duration=1, sampling_rate=1000, frequency=50, amplitude=230,
                                    anomaly_probability=0.001, anomaly_duration=100, anomaly_drop=0.2)
 
-# Prepare the data for the API request: only time and normal_wave (value)
 time_series_data = [{"time": str(row['time']), "value": row['anomaly_wave']} for _, row in sample_df.iterrows()]
 
-# API endpoint URL
-url = "http://127.0.0.1:8000/timeseries/1234"  # Assuming '1234' is the process_id
+url = "http://127.0.0.1:8000/timeseries/1234"  
 
-# Payload for the POST request
 payload = {
-    "process_id": "1234",  # A unique identifier for the time series
+    "ts_id": "1234",  # A unique identifier for the time series
+    "process_id": "", # Not currently definied
     "data": time_series_data,
     "anomaly": False  # Set as False since we are not detecting anomalies here
 }
 
-# Send the data to the FastAPI server
 response = requests.put(url, json=payload)
 
-# Print the response
 if response.status_code == 200:
     print("Sample waveform stored successfully.")
 else:

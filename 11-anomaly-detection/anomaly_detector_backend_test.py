@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 from scipy.stats import entropy
 
-def fetch_time_series(process_id):
-    url = f"http://127.0.0.1:8000/timeseries/{process_id}"
+def fetch_time_series(ts_id):
+    url = f"http://127.0.0.1:8000/timeseries/{ts_id}"
     response = requests.get(url)
 
     if response.status_code == 200:
@@ -73,21 +73,21 @@ def generate_single_sample(duration=1, sampling_rate=1000, frequency=50, amplitu
 
     return pd.DataFrame(data)
 
-def update_anomaly_status(process_id, anomaly_status):
-    url = f"http://127.0.0.1:8000/timeseries/{process_id}/anomaly"
-    
-    params = {"anomaly": anomaly_status}
+def update_anomaly_status(ts_id, anomaly_status):
+    url = f"http://127.0.0.1:8000/timeseries/{ts_id}/anomaly"
+  
+    params = {"anomaly": anomaly_status, "process_id": "5678"}
     response = requests.patch(url, params=params)
     
     if response.status_code == 200:
-        print(f"Database updated successfully. Process ID: {process_id}, Anomaly: {anomaly_status}")
+        print(f"Database updated successfully. Timeseries ID: {ts_id}, Anomaly: {anomaly_status}, Process ID: 5678")
     else:
         print(f"Failed to update the database. Status code: {response.status_code}")
         print(f"Response: {response.text}")
 
 try:
-    process_id = "1234"
-    time_series_data = fetch_time_series(process_id)
+    ts_id = "1234"
+    time_series_data = fetch_time_series(ts_id)
     
     df = convert_to_dataframe(time_series_data)
     
@@ -101,10 +101,10 @@ try:
     
     if anomaly_detected:
         print(f"Anomaly detected! KL Divergence: {kl_divergence}")
-        update_anomaly_status(process_id, True)
+        update_anomaly_status(ts_id, True)
     else:
         print(f"No anomaly detected. KL Divergence: {kl_divergence}")
-        update_anomaly_status(process_id, False)
+        update_anomaly_status(ts_id, False)
 
 except Exception as e:
     print(e)
