@@ -230,16 +230,7 @@ curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies_only=true'
 ```
 
 # ColonyOS
-We are now going to explore several methods to build a scalable and resilient compute platform using ColonyOS.
-
-* Anomaly Python executor
-* Container executor
-* Container executor with generators
-
-Let's first explore how to build a Python executor.
-
-## Anomaly Python executor
-We are going to develop a custom anomaly detection executor in Python, which will receive process assignments from the Colonies server. These processes will contain metadata about time series that should be checked for anomalies. The main advantage of a custom executor is performance, as it directly runs Python code without the need to spawn containers. Spawning containers can sometimes be very slow, for example on large Kubernetes clusters. As a result, custom executors is particularly well-suited for stream processing use cases, where small jobs need to be processed quickly. However, scaling can be more complex, as additional executors must be deployed manually to handle higher workloads. 
+We are now going to develop an anomaly detection executor in Python, which will receive process assignments from the Colonies server. These processes will contain metadata about time series that should be checked for anomalies. The main advantage of a custom executor is performance, as it directly runs Python code without the need to spawn containers. Spawning containers can sometimes be very slow, for example on large Kubernetes clusters. As a result, custom executors is particularly well-suited for stream processing use cases, where small jobs need to be processed quickly. However, scaling can be more complex, as additional executors must be deployed manually to handle higher workloads. 
 
 Below is an overview of the system we are going to develop. The *submit.py* script generates a sample waveform time series, assign it unique ID, upload it to the database backend (*backend.py*), and submit a function specification to the *Colonies server*. The executor (*executor.py*) will then receive a process assignment, retrieve the time series ID from the function specification, fetch the time series from the database, detect anomalies, update the database, and finally close the process.
 
