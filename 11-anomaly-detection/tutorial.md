@@ -311,7 +311,7 @@ self.colonies.add_log(process.processid, logMsg, self.executor_prvkey)
 Let's search for the key word *Anom*.
 
 ```bash
-colonies log search --text "Anom"             12:06:58
+colonies log search --text "Anom"
 ```
 
 ```bash
