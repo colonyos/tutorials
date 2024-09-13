@@ -1,6 +1,7 @@
 # Getting started
 In this tutorial, we are going to develop a simple anomaly detection service that identifies irregularities in time-series data. Specifically, we will focus on detecting anomalies in a continuous signal, in particilar we are going to detect anomalies in voltage measurements.
 
+# Dataset
 To begin, we need to create a time-series dataset that simulates the behavior of a 50Hz AC power signal (230V). The dataset will consist of a continuous sinusoidal wave, representing the normal operation of the system, and occasional anomalies injected randomly to simulate sudden voltage drops.
 
 We’ll start by writing a Python script to generate this synthetic dataset. The script will create a normal sinusoidal wave and inject anomalies based on a given probability and duration. 
@@ -42,7 +43,7 @@ python gen_dataset.py
 
 The script will create a file, called *dataset.csv*.
 
-## Detecting anomalies
+# Anomaly detection 
 We are going to use a very simple method to detect anomalies based on **Kullback-Leibler (KL) divergence**. KL divergence measures how one probability distribution differs from a reference distribution, thus making useful to detect anomalies in time-series data.
 
 In our case, we will treat the normal signal as our reference distribution and the potentially anomalous signal as the second distribution. By comparing these two distributions, we can 
@@ -63,7 +64,7 @@ KL divergence essentially tells us how much information is lost when one distrib
 Run the Python script below to calculate a suitable threshold value based on the training dataset.
 
 ```bash
-python3 kl_div.py
+python3 calc_kl_div_threshold.py
 ```
 
 <img src="kl_div_res.png">
@@ -76,7 +77,7 @@ Recall: 1.0000
 F1-Score: 1.0000
 ```
 
-F1-Score of 1.0000 indicates perfect precision and recall, meaning the model did not make any classification errors. Also, 0.010199148586751076 seems to be a good threshold.
+F1-Score of 1.0000 indicates perfect precision and recall, meaning the model did not make any classification errors. Hence, 0.010199148586751076 seems to be a good threshold.
 The code below generates a sample and then tests if it contains an anomaly. 
 
 ```python
@@ -151,17 +152,89 @@ print(f"Anomaly detected: {anomaly_detected}")
 print(f"KL Divergence: {kl_divergence}")
 ```
 
-The next step is to split the code into several components: one where the client generates a sample, store it a database/memory, generate a job which is picked up by executor that performs anomaly detection, and finally update the database with the result.
-
-## Database
-Let's implement first implement an in-memory database with a REST API to stores samples.
-
 ```bash
-pip install fastapi uvicorn pandas
+python3 anomaly_detector_test.py  
 ```
 
-POST /store/: Stores time series data (time-value pairs) and metadata (anomaly status) based on process_id.
-GET /get_timeseries/{process_id}: Retrieves the time series data and metadata using the process_id.
-GET /list_timeseries/: Lists all stored time series data and their associated metadata (process_id and anomaly status).
-PUT /update_timeseries/{process_id}: Updates the anomaly status of the time series data by process_id.
-DELETE /delete_timeseries/{process_id}: Deletes the time series data using process_id.
+```bash
+Anomaly detected: True
+KL Divergence: 0.22748609711977114
+```
+
+# Database backend
+We will need a database system to store waveforms and track their anomaly status. As a first step, let's implement a simple in-memory database with a REST API for storing and managing waveforms.
+
+```bash
+pip install fastapi uvicorn panda requests
+```
+
+| HTTP Method | Endpoint                            | Description                                               |
+|-------------|-------------------------------------|-----------------------------------------------------------|
+| PUT         | /timeseries/{process_id}            | Create or update time-series data for a given process ID. |
+| GET         | /timeseries/{process_id}            | Retrieve time-series data by process ID.                  |
+| GET         | /timeseries/anomalies/              | Returns a list of all time-series.                        |
+| PATCH       | /timeseries/{process_id}/anomaly    | Update only the anomaly status for a given process ID.    |
+| DELETE      | /timeseries/{process_id}            | Delete time-series data by process ID.                    |
+
+```bash
+python3 backend.py
+```
+
+```bash
+INFO:     Started server process [224389]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+```
+
+To test the backend, let's first develop a Python script that generates a waveform and upload it to the database. Start another terminal and type:
+
+```bash
+python3 upload_sample_test.py
+```
+
+```bash
+Anomaly detected at index: 612
+Sample waveform stored successfully.
+```
+
+To list all timeseries, type: 
+```bash
+curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies_only=false'
+```
+
+```json
+{"timeseries":[{"process_id":"1234","anomaly":false}]}⏎
+```
+
+Now, let's develop a Python script that fetches the process with ID 1234, checks if it contains an anomaly, and updates the database accordingly.
+
+```bash
+python3 anomaly_detector_backend_test.py
+```
+
+```bash
+Anomaly detected! KL Divergence: 0.09482433169355574
+Database updated successfully. Process ID: 1234, Anomaly: True
+```
+
+Let's check the database to see if the anomaly label has been updated.
+```bash
+curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies_only=false'
+```
+
+```json
+{"timeseries":[{"process_id":"1234","anomaly":true}]}⏎
+```
+
+# ColonyOS
+We are now going to explore several methods to build a scalable and resilient compute platform using ColonyOS.
+
+* Dedicated executor
+* Container executor
+* Container executor with generators
+
+Let's first explore how to build a dedicated executor
+
+## Dedicator executor
+
