@@ -239,11 +239,9 @@ We are now going to explore several methods to build a scalable and resilient co
 Let's first explore how to build a Python executor.
 
 ## Anomaly Python executor
-We are going to develop a custom anomaly detection executor in Python, which will receive process assignments from the Colonies server. These processes will contain metadata about time series that should be checked for anomalies. The main advantage of a custom executor is performance, as it directly runs Python code without the need to spawn containers. Spawning containers can sometimes be very slow, for example on large Kubernetes clusters. As a result, custom executors is particularly well-suited for stream processing use cases, where small jobs need to be processed quickly.
+We are going to develop a custom anomaly detection executor in Python, which will receive process assignments from the Colonies server. These processes will contain metadata about time series that should be checked for anomalies. The main advantage of a custom executor is performance, as it directly runs Python code without the need to spawn containers. Spawning containers can sometimes be very slow, for example on large Kubernetes clusters. As a result, custom executors is particularly well-suited for stream processing use cases, where small jobs need to be processed quickly. However, scaling can be more complex, as additional executors must be deployed manually to handle higher workloads. 
 
-However, scaling can be more complex, as additional executors must be deployed manually to handle higher workloads. This approach also lacks compatibility with HPC systems, which only support container executors.
-
-Below is an overview of the system we are going to develop. The submit.py script will generate a sample waveform, assign a unique ID to the time series, upload it to the database backend, and submit a function specification to the Colonies server. The executor will then receive a process assignment, retrieve the time series ID from the function specification, fetch the time series from the database, detect anomalies, update the database, and finally close the process.
+Below is an overview of the system we are going to develop. The *submit.py* script generates a sample waveform time series, assign it unique ID, upload it to the database backend (*backend.py*), and submit a function specification to the *Colonies server*. The executor (*executor.py*) will then receive a process assignment, retrieve the time series ID from the function specification, fetch the time series from the database, detect anomalies, update the database, and finally close the process.
 
 <img src="python_executor.png">
 
@@ -300,7 +298,13 @@ colonies process psw
 ╭──────────┬─────────────────────────┬─────────────────────────┬─────────────────────┬───────────────┬──────────────────┬───────────┬───────╮
 │ FUNCNAME │ ARGS                    │ KWARGS                  │ SUBMSSION TIME      │ EXECUTOR NAME │ EXECUTOR TYPE    │ INITIATOR │ LABEL │
 ├──────────┼─────────────────────────┼─────────────────────────┼─────────────────────┼───────────────┼──────────────────┼───────────┼───────┤
-│ anomaly  │ 2fa16f6fe395e98d5293... │ db:http://127.0.0.1:... │ 2024-09-13 12:03:───────┴──────────────────┴───────────┴───────╯
+│ anomaly  │ 38df090c2882aafa7d06... │ db:http://127.0.0.1:... │ 2024-09-13 12:24:59 │               │ anomaly-executor │ johan     │       │
+│ anomaly  │ 499ec3664748d66da558... │ db:http://127.0.0.1:... │ 2024-09-13 12:25:00 │               │ anomaly-executor │ johan     │       │
+│ anomaly  │ 12c84c05d3b4ee8f1b78... │ db:http://127.0.0.1:... │ 2024-09-13 12:25:00 │               │ anomaly-executor │ johan     │       │
+│ anomaly  │ cf9205cca7adf9b0a92f... │ db:http://127.0.0.1:... │ 2024-09-13 12:25:01 │               │ anomaly-executor │ johan     │       │
+│ anomaly  │ 6bc65485c6b193a270aa... │ db:http://127.0.0.1:... │ 2024-09-13 12:25:01 │               │ anomaly-executor │ johan     │       │
+│ anomaly  │ c76dc05cc12405fb276e... │ db:http://127.0.0.1:... │ 2024-09-13 12:25:02 │               │ anomaly-executor │ johan     │       │
+╰──────────┴─────────────────────────┴─────────────────────────┴─────────────────────┴───────────────┴──────────────────┴───────────┴───────╯
 ```
 
 If no anomaly detection executor is available, the processes will be queued until a matching executor becomes available. Once the executor is started again, it will begin processing all pending time series jobs. You can also start more than one executor, and the workload will be automatically load-balanced between the available executors.
