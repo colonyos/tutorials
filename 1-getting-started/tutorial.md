@@ -12,12 +12,24 @@ The following commands will use Docker Compose to set up and configure a Colonie
 
 *Note!* The *docker-compose.env* file contains credentials and configuration and must be sourced before using the Colonies CLI command.
 
+On Mac or Linux type:
+
 ```bash
 wget https://raw.githubusercontent.com/colonyos/colonies/main/docker-compose.env; 
 source docker-compose.env; 
 wget https://raw.githubusercontent.com/colonyos/colonies/main/docker-compose.yml;
 docker-compose up
 ```
+
+On Windows type:
+```bash
+wget https://raw.githubusercontent.com/colonyos/colonies/main/windowsenv.bat 
+windowsenv.bat
+wget https://raw.githubusercontent.com/colonyos/colonies/main/docker-compose.yml
+docker-compose up
+```
+
+Note that all three commands must be types seperately on Windows.
 
 Press control-c to exit.
 
@@ -46,6 +58,11 @@ Start another terminal and run the command below to load the credentials and set
 
 ```bash
 source docker-compose.env
+```
+
+On Window:
+```bash
+windowsenv.bat
 ```
 
 We can now interact with the Colonies server, and for example, list available executors.
