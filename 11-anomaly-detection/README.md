@@ -60,7 +60,16 @@ Where:
 - *Q(i)* is the probability of the signal in the abnormal distribution at bin  *i*,
 - *log P(i)/Q(i)* measures the divergence between the two distributions for each bin.
 
-KL divergence essentially tells us how much information is lost when one distribution (the normal signal) is used to approximate another distribution (the abnormal signal). A higher KL divergence value means that the abnormal signal is significantly different from the normal one, and this difference could be indicative of an anomaly. By setting a threshold, we can define a boundary that distinguishes normal behavior from anomalous behavior. If the KL divergence value exceeds this threshold, it indicates that the difference between the normal and abnormal signals is significant enough to be considered an anomaly. 
+KL divergence essentially tells us how much information is lost when one distribution (the normal signal) is used to approximate another distribution (the abnormal signal). A higher KL divergence value means that the abnormal signal is significantly different from the normal one, and this difference could be indicative of an anomaly. 
+
+Below is an example of a histogram of a normal sine wave.
+<img src="normal_wave.png">
+
+Below is an example of a histogram of an anomalous sine wave.
+
+Using KL divergence we can calculate the difference between the normal and anomalous distributions.  
+By setting a threshold, we can define a boundary that distinguishes normal behavior from anomalous behavior. If the KL divergence value exceeds this threshold, it indicates that the difference between the normal and abnormal signals is significant enough to be considered an anomaly. 
+<img src="anom_wave.png">
 
 Run the Python script below to calculate a suitable threshold value based on the training dataset.
 
