@@ -202,7 +202,7 @@ Sample waveform stored successfully.
 
 To list all time series, type: 
 ```bash
-curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies_only=false'
+curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies=false'
 ```
 
 ```json
@@ -222,7 +222,7 @@ Database updated successfully. Timeseries ID: 1234, Anomaly: True, Process ID: 5
 
 Let's check the database to see if the anomaly label has been updated.
 ```bash
-curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies_only=true'
+curl -X 'GET' 'http://127.0.0.1:8000/timeseries/?anomalies=true'
 ```
 
 ```json
