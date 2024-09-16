@@ -247,13 +247,13 @@ Below is an overview of the system we are going to develop. The *submit.py* scri
 
 First let's start a database backend server.
 ```bash
-python3 python3 backend.py
+python3 backend.py
 ```
 
 In another terminal, start the executor. Remeber to source the *docker-compose.env* file to load all credentials.
 ```bash
 source docker-compose.env;
-python3 python3 executor.py
+python3 executor.py
 ```
 
 ### Submit time series anomaly detection jobs
