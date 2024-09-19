@@ -1,8 +1,8 @@
 # Getting started
-In this tutorial, we are going to develop a simple anomaly detection service that identifies irregularities in time-series data. Specifically, we will focus on detecting anomalies in a continuous signal, in particilar we are going to detect anomalies in voltage measurements.
+In this tutorial, we are going to develop a simple anomaly detection service that identifies irregularities in time series data. Specifically, we will focus on detecting anomalies in a continuous signal, in particilar we are going to detect anomalies in voltage measurements.
 
 # Dataset
-To begin, we need to create a time-series dataset that simulates the behavior of a 50Hz AC power signal (230V). The dataset will consist of a continuous sinusoidal wave, representing the normal operation of the system, and occasional anomalies injected randomly to simulate sudden voltage drops.
+To begin, we need to create a time series dataset that simulates the behavior of a 50Hz AC power signal (230V). The dataset will consist of a continuous sinusoidal wave, representing the normal operation of the system, and occasional anomalies injected randomly to simulate sudden voltage drops.
 
 We’ll start by writing a Python script to generate this synthetic dataset. The script will create a normal sinusoidal wave and inject anomalies based on a given probability and duration. 
 
@@ -45,7 +45,7 @@ python gen_dataset.py
 The script will create a file, called *dataset.csv*.
 
 # Anomaly detection 
-We are going to use a very simple method to detect anomalies based on **Kullback-Leibler (KL) divergence**. KL divergence measures how one probability distribution differs from a reference distribution, thus making useful to detect anomalies in time-series data.
+We are going to use a very simple method to detect anomalies based on **Kullback-Leibler (KL) divergence**. KL divergence measures how one probability distribution differs from a reference distribution, thus making useful to detect anomalies in time series data.
 
 In our case, we will treat the normal signal as our reference distribution and the potentially anomalous signal as the second distribution. By comparing these two distributions, we can 
 calculate how much the abnormal signal deviates from what we expect under normal conditions.
@@ -179,13 +179,13 @@ We will need a database system to store waveforms and track their anomaly status
 pip install fastapi uvicorn panda requests
 ```
 
-| HTTP Method | Endpoint                            | Description                                               |
-|-------------|-------------------------------------|-----------------------------------------------------------|
-| PUT         | /timeseries/{process_id}            | Create or update time-series data for a given process ID. |
-| GET         | /timeseries/{process_id}            | Retrieve time-series data by process ID.                  |
-| GET         | /timeseries/anomalies/              | Returns a list of all time-series.                        |
-| PATCH       | /timeseries/{process_id}/anomaly    | Update only the anomaly status for a given process ID.    |
-| DELETE      | /timeseries/{process_id}            | Delete time-series data by process ID.                    |
+| HTTP Method | Endpoint                       | Description                                                   |
+|-------------|--------------------------------|---------------------------------------------------------------|
+| PUT         | /timeseries/{ts_id}            | Create or update time series data for a given time series ID. |
+| GET         | /timeseries/{ts_id}            | Retrieve time series data by time series ID.                  |
+| GET         | /timeseries/anomalies/         | Returns a list of all time series.                            |
+| PATCH       | /timeseries/{ts_id}/anomaly    | Update only the anomaly status for a given time series ID.    |
+| DELETE      | /timeseries/{ts_id}            | Delete time series data by time series ID.                    |
 
 ```bash
 python3 backend.py
