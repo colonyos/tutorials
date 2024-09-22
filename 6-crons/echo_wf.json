@@ -1,0 +1,24 @@
+[{
+    "conditions": {
+        "executortype": "container-executor",
+        "executornames": [
+            "dev-docker"
+        ],
+        "nodes": 1,
+        "processespernode": 1,
+        "mem": "10Gi",
+        "cpu": "1000m",
+        "gpu": {
+            "count": 0
+        },
+        "walltime": 60
+    },
+	"nodename": "echo",
+    "funcname": "execute",
+    "kwargs": {
+        "cmd": "echo hello world",
+        "docker-image": "ubuntu:20.04"
+    },
+    "maxexectime": 55,
+    "maxretries": 3
+}]
