@@ -17,22 +17,25 @@ This repo contains several tutorials to help you get started with ColonyOS, an o
 5. [Workflows](5-workflows/README.md)
     - Explore how to create and manage complex workflows, allowing you to define dependencies and automate processes across different computing environments.
 
-6. [Pollinator](6-pollinator/README.md)
+6. [Workflows](6-crons/README.md)
+    - Explore how to create periodic workflows.
+
+7. [Pollinator](7-pollinator/README.md)
     - Learn how to use the Pollinator tool for batch processing.
 
-7. [Security](7-security/README.md)
+8. [Security](8-security/README.md)
     - Learn about ColonyOS security features, including best practices and tools to ensure your deployments are secure.
 
-8. [Production deployment](8-production/README.md) 
+9. [Production deployment](9-production/README.md) 
     - Learn how to deploy ColonyOS on a Kubernetes cluster for production use.
 
-9. [K8s Executor](9-k8s-executor/README.md)
+10. [K8s Executor](10-k8s-executor/README.md)
     - Deploy a K8s Executor to run processes as Kubernetes batch jobs.
 
-10. [HPC Executor](10-hpc-executor/README.md)
+11. [HPC Executor](11-hpc-executor/README.md)
     - Deploy a HPC Executor to run processes as Slurm batch jobs.
 
-11. [Anomaly detection example](11-anomaly-detection/README.md)
+12. [Anomaly detection example](12-anomaly-detection/README.md)
     - Develop a simple time series anomaly detection service.
 
 ---

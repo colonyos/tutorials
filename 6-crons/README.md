@@ -129,6 +129,7 @@ Type the following command to get info about a specific cron:
 colonies cron get --cronid 83e4010ff9c8d9c762c83fc4d8d3ea24c29478f6342a72b40440ead2685be658
 ```
 
+```console
 ╭────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Cron                                                                                       │
 ├─────────────────────────┬──────────────────────────────────────────────────────────────────┤
@@ -157,6 +158,7 @@ colonies cron get --cronid 83e4010ff9c8d9c762c83fc4d8d3ea24c29478f6342a72b40440e
 │ MaxRetries  │ 3                                               │
 │ Label       │                                                 │
 ╰─────────────┴─────────────────────────────────────────────────╯
+```
 
 To remove a cron:
 ```console
