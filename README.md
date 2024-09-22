@@ -17,7 +17,7 @@ This repo contains several tutorials to help you get started with ColonyOS, an o
 5. [Workflows](5-workflows/README.md)
     - Explore how to create and manage complex workflows, allowing you to define dependencies and automate processes across different computing environments.
 
-6. [Workflows](6-crons/README.md)
+6. [Cron scheduling](6-crons/README.md)
     - Explore how to create periodic workflows.
 
 7. [Pollinator](7-pollinator/README.md)
