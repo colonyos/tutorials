@@ -3,24 +3,33 @@ import openeo
 import time
 import rasterio
 import os
+import json
+import sys
 from pathlib import Path
 from matplotlib import pyplot as plt
 
-eo_service_url = os.getenv('OPENEO_URL')
-user = os.getenv('OPENEO_USER')
-passwd = os.getenv('OPENEO_PASSWORD')
+aoi_str = os.getenv("aoi")
+if aoi_str is not None:
+    aoi = json.loads(aoi_str)
+else:
+    print("No AOI provided. Exiting ...")
+    sys.exit(-1)
+
+temporal_extent = os.getenv("temporal_extent")
+bands = os.getenv("bands")
+label = os.getenv("label")
+eo_service_url = os.getenv("openeourl")
+user = os.getenv("openeouser")
+passwd = os.getenv("openeopasswd")
+
+print("Connecting to OpenEO server: ", eo_service_url)
+
+datadir_path = "/cfs/"+str(label)
+datadir = Path(datadir_path)
+datadir.mkdir(parents=True, exist_ok=True)
+
 connection = openeo.connect(eo_service_url)
-
-print(eo_service_url)
-print(user)
 print(connection.authenticate_basic(username=user, password=passwd))
-
-aoi = {
-    'east': 22.136334940987638,  # max longitude
-    'south': 65.63560585326866,  # min latitude
-    'west': 21.79257719972466,   # min longitude
-    'north': 65.78212032521256   # max latitude
-}
 
 def poll_job(job, polling_interval=10):
     while True:
@@ -79,30 +88,25 @@ job = cube.create_job(out_format="gtiff",
 print("Creating OpenEO job, ID=", job.job_id)
 print("Starting OpenEO job, ID=", job.job_id)
 print("Waiting ...")
+
 job.start_and_wait()
 poll_job(job)
 
 results = job.get_results()
 results.get_metadata()
-results.download_files("data/out")
-
-directory = Path('data/out')
+results.download_files(datadir_path)
 
 print("Cleaning junk files ...")
-for file in directory.iterdir():
+for file in datadir.iterdir():
     if file.is_file() and file.suffix != '.tif':
         file.unlink()
         print(f"Deleted: {file}")
-
 print("Deletion complete.")
 
 print("Converting GeoTiff to JPEG ...")
-def convert_all_tif_to_jpg(directory: str):
-    dir_path = Path(directory)
-    
-    for tif_file in dir_path.glob('*.tif'):
+def convert_all_tif_to_jpg(datadir):
+    for tif_file in datadir.glob('*.tif'):
         jpg_file = tif_file.with_suffix('.jpg')
         convert_gtiff_to_img(str(tif_file), str(jpg_file))
         print(f"Converted {tif_file} to {jpg_file}")
-
-convert_all_tif_to_jpg('data/out')
+convert_all_tif_to_jpg(datadir)
