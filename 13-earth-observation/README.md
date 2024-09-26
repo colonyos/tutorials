@@ -9,12 +9,22 @@ ColonyOS is a meta-operating system and should be conceptualized as such, despit
 ## Use case
 We will develop an EO workflow with the following steps:
 
-1. Download Sentinel-2 images for a specified area of interest to the ColonyFS under **/openeo/rutvik/images**.
+1. Download Sentinel-2 images from Digital Earth Sweden's OpenEO service for a specified area of interest to the ColonyFS under **/openeo/rutvik/images**.
 
-2. Generate cloud masks for all images in **/openeo/rutvik/images**, along with a CSV file (**/openeo/rutvik/cloud/cloud_coverage.csv**) containing cloud coverage percentages. Both the cloud masks and CSV file will be stored in the directory **/openeo/rutvik/cloud**.
+2. Generate cloud masks for all images in **/openeo/rutvik/images**, along with a CSV file (**cloud_coverage.csv**) containing cloud coverage percentages. Both the cloud masks and CSV file will be stored in the directory **/openeo/rutvik/cloud**.
 
 3. Compute the NDVI average for all images in **/openeo/rutvik/images** where the cloud coverage (obtained from **/openeo/rutvik/cloud/cloud_coverage.csv**) exceeds a specified threshold. A time series plot (**ndvi_time_series.png**) and a corresponding CSV file (**ndvi_time_series.csv**) will be saved in **/openeo/rutvik/ndvi**.
 
 4. Email the **ndvi_time_series.png** and **ndvi_time_series.csv** files to a selected user.
+
+The selected area will be in northern Sweden, close to Luleå.
+
+<img src="rutvik.png">
+
+# Run the workflow
+
+<img src="workflow.png">
+<img src="mail.png">
+
 
 
