@@ -1,7 +1,7 @@
 # Getting started
-In this tutorial, we will explore how ColonyOS can be used for processing Earth Observation (EO) data. We are going to use a service called [OpenEO](https://openeo.org), which is a service part of the [Digital Earth Sweden](https://digitalearth.se) platform. By combining the capabilities of ColonyOS with the advanced features offered by OpenEO, we will demonstrate how to efficiently handle, analyze, and derive valuable insights from large-scale geospatial datasets.
+ColonyOS is a novel type of operating system or cloud platform, designed to operate across other platforms where underlying components can be distributed across a geographically dispersed **Compute Continuum**.
 
-<img src="arch.png">
+In this tutorial, we will explore how ColonyOS can be used for processing Earth Observation (EO) data. We are going to use a service called [OpenEO](https://openeo.org), which is a service part of the [Digital Earth Sweden](https://digitalearth.se) platform. By combining the capabilities of ColonyOS with the advanced features offered by OpenEO, we will demonstrate how to efficiently handle, analyze, and derive valuable insights from large-scale geospatial datasets.
 
 # Use case
 We will develop an EO workflow with the following steps:
@@ -34,9 +34,41 @@ Once the workflow is complete, the selected user will receive an email containin
 <img src="mail.png">
 
 # Technical Explanation
-ColonyOS is a novel type of operating system, designed to function across a distributed architecture where its underlying components can span a geographically dispersed compute continuum.
+## Deploying code  
+In a traditional operating system, applications are typically stored on a filesystem, such as a hard drive. Similarly, in ColonyOS, applications like Python scripts are stored on a distributed filesystem called *ColonyFS* and are launched just as they would be in a conventional operating system.
 
-ColonyOS is a new kind of operating system, despite being distributed where underlying components could potentially be spread across a geographically dispersed *compute continuum*. In a traditional operating system, applications are typically stored on a filesystem, like a hard drive. Similarly, in ColonyOS, we will store applications, such as Python scripts, on ColonyFS and start them just as we would with a conventional operating system.
+The **src** directories contains the following Python Scripts:
+
+| Filename         | Purpose                                    |
+|------------------|--------------------------------------------|
+| fetch.py         | Fetch images from OpenEO to ColonyFS       |
+| cloud_filter.py  | Calculates cloud mask and coverage         |
+| ndvi.py          | Calculates a NDVI time series              |
+| mail.py          | Mails results to a user                    |
+| parseenv.py      | Example script to explain argument passing |
+
+```bash
+colonies fs sync -l /openeo/src -d ./src --yes
+```
+
+We have now uploaded all scripts to ColonyFS under the label **/openeo/src**. A label functions similarly to a directory in a standard file system.
+
+```bash
+colonies fs label ls
+```
+
+```bash
+╭────────────────────────────────────────┬───────╮
+│ LABEL                                  │ FILES │
+├────────────────────────────────────────┼───────┤
+│ /openeo/src                            │ 5     │
+╰────────────────────────────────────────┴───────╯
+```
+
+## Deploying code  
+
+
+
 
 <img src="arch.png">
 
