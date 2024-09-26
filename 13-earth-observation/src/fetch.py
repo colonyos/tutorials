@@ -5,8 +5,15 @@ import rasterio
 import os
 import json
 import sys
+import logging
 from pathlib import Path
 from matplotlib import pyplot as plt
+ 
+handler = logging.StreamHandler(sys.stdout)
+handler.flush = sys.stdout.flush  # Ensure flush method is called on each log entry
+
+logging.basicConfig(level=logging.INFO, handlers=[handler])
+logger = logging.getLogger(__name__) 
 
 aoi_str = os.getenv("aoi")
 if aoi_str is not None:
@@ -17,14 +24,14 @@ else:
 
 temporal_extent = os.getenv("temporal_extent")
 bands = os.getenv("bands")
-label = os.getenv("label")
+images_label = os.getenv("images")
 eo_service_url = os.getenv("openeourl")
 user = os.getenv("openeouser")
 passwd = os.getenv("openeopasswd")
 
 print("Connecting to OpenEO server: ", eo_service_url)
 
-datadir_path = "/cfs/"+str(label)
+datadir_path = "/cfs/"+str(images_label)
 datadir = Path(datadir_path)
 datadir.mkdir(parents=True, exist_ok=True)
 

@@ -18,18 +18,12 @@
         "cmd": "python3",
         "docker-image": "johan/openeo",
 		"args": [
-            "/cfs/src/fetch.py"
+            "/cfs/src/cloud_filter.py"
 		]
     },
 	"env": {
-		"aoi": "{\"east\": 22.136334940987638, \"south\": 65.63560585326866, \"west\": 21.79257719972466, \"north\": 65.78212032521256}",
-        "temporal_extent": "[\"2024-08-02T00:00:00Z\", \"2024-08-10T10:00:00Z\"]",
-        "bands": "[\"b04\", \"b03\", \"b02\", \"b08\"]",
-		"openeourl": "https://openeo.digitalearth.se",
-		"openeouser": "testuser",
-		"openeopasswd": "secretpassword",
-		"images": "/openeo/rutvik/images"
-
+		"images": "/openeo/rutvik/images",
+		"cloud": "/openeo/rutvik/cloud"
 	},
 	"fs": {
         "mount": "/cfs",
@@ -48,8 +42,21 @@
                 }
             },
 		    {
-                 "label": "/openeo/rutvik",
+                 "label": "/openeo/rutvik/images",
                  "dir": "/openeo/rutvik/images",
+                 "keepfiles": false,
+                 "onconflicts": {
+                    "onstart": {
+                         "keeplocal": false
+                 	},
+                    "onclose": {
+                    	"keeplocal": false 
+           			 }
+				 }
+			},
+		    {
+                 "label": "/openeo/rutvik/cloud",
+                 "dir": "/openeo/rutvik/cloud",
                  "keepfiles": false,
                  "onconflicts": {
                     "onstart": {
