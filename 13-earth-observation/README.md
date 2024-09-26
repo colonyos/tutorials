@@ -180,7 +180,7 @@ secretpassword
 INFO[0003] Process finished successfully                 ProcessId=25e4bc7f3e8c09e4c9cee166a1d24d33b5dd55595ca3a38ea2bc24edd9bc90a2
 ```
 
-It is also possible to define a local path on the system that should be uploaded to ColonyFS after the container has finished execution. We will use this feature to transfer data between processes in the workflow.
+It is also possible to define a local path on the system that should be uploaded to ColonyFS after the container has finished execution. We will use this feature to save results, and transfer data between processes in the workflow.
 
 ## Fethcing images from OpenEO 
 The script [fetch.py](src/fetch.py) fetches data from OpenEO and store data in ColonyFS under **/openeo/rutvik/images**.
@@ -188,6 +188,10 @@ The script [fetch.py](src/fetch.py) fetches data from OpenEO and store data in C
 ```bash
 colonies function submit --spec fetch.json --follow
 ```
+
+The figure below illustrates the steps executed behind the scene.
+
+<img src="arch.png">
 
 Let's see if some images were added to ColonyFS.
 
@@ -210,9 +214,79 @@ To view the images we need to download them to our local filesystem.
 colony fs sync -l /openeo/rutvik/images -d ./rutvik
 ```
 
-Yikes, 
+Many of the images appear to be cloudy, so we need to filter them out.
 
-<img src="arch.png">
+<img src="cloudy.png">
+
+## Filter cloud images
+The script [cloud_filter.py](src/cloud_filter.py) calcules a cloud mask and CSV file cloud coverage under **/openeo/rutvik/cloud**. Let's run it.
+
+```bash
+colonies function submit --spec cloud_filter.json --follow
+```
+
+```bash
+colony fs label ls
+```
+
+```bash
+╭────────────────────────────────────────┬───────╮
+│ LABEL                                  │ FILES │
+├────────────────────────────────────────┼───────┤
+│ /openeo/src                            │ 5     │
+│ /openeo/rutvik/images                  │ 8     │
+│ /openeo/rutvik/cloud                   │ 9     │
+╰────────────────────────────────────────┴───────╯
+```
+
+```bash
+colonies fs ls -l /openeo/rutvik/cloud  
+```
+
+╭────────────────────────────────────┬──────────┬──────────────────────────────────────────────────────────────────┬─────────────────────┬───────────╮
+│ FILENAME                           │ SIZE     │ LATEST ID                                                        │ ADDED               │ REVISIONS │
+├────────────────────────────────────┼──────────┼──────────────────────────────────────────────────────────────────┼─────────────────────┼───────────┤
+│ cloud_out_2024_08_08T10_20_21.tif  │ 3082 KiB │ ad47d1b6d0bbd10cc196c4f6278def1ad89aabcabc5a6e1afcf8212a587aa541 │ 2024-09-26 11:39:25 │ 1         │
+│ cloud_out_2024_08_08T10_20_21.jpeg │ 304 KiB  │ f9e70d10e11f43c2fe6bccbeb4ba8807d19bbf0b5236fda5699593351c40d134 │ 2024-09-26 11:39:25 │ 1         │
+│ cloud_out_2024_08_06T10_25_59.tif  │ 3082 KiB │ bf9a879847dc4c74bdd8ca6349cd7c57526e169f0388f45a7c109f758444ae8a │ 2024-09-26 11:39:25 │ 1         │
+│ cloud_out_2024_08_06T10_25_59.jpeg │ 283 KiB  │ c62435d871664277d5df347891ac36bc0f06cb546f180d9fa3eef671d2e88999 │ 2024-09-26 11:39:25 │ 1         │
+│ cloud_out_2024_08_05T10_06_01.tif  │ 3082 KiB │ 387bf976c268840022b0c00e02db4b9c84b46e6b9700d2ba4c776ab65bdf55d2 │ 2024-09-26 11:39:25 │ 1         │
+│ cloud_out_2024_08_05T10_06_01.jpeg │ 940 KiB  │ e0e8ddad41192437e8a4a9398d7589331457153eec22827cb98dd5037b5dc3cb │ 2024-09-26 11:39:25 │ 1         │
+│ cloud_out_2024_08_03T10_15_59.tif  │ 3082 KiB │ 39ca16b5d3a9524f03aba625092d86e9c099476a32661facf4895f228bb2c641 │ 2024-09-26 11:39:25 │ 1         │
+│ cloud_out_2024_08_03T10_15_59.jpeg │ 237 KiB  │ 3946794cdc033b9e902df47241837df72f5827354e9c9b3d58674b659416de56 │ 2024-09-26 11:39:24 │ 1         │
+│ cloud_coverage.csv                 │ 0 KiB    │ 95478e1c201325bb11f660b5d17ca5f8e6c669512d2061c0714d9790f30a45ed │ 2024-09-26 11:39:24 │ 1         │
+╰────────────────────────────────────┴──────────┴──────────────────────────────────────────────────────────────────┴─────────────────────┴───────────╯
+
+## Calculate a NDVI time serie
+The script [ndvi.py](src/ndvi.py) generates the NDVI time series, and stores the result in **/openeo/rutvik/ndvi**.
+
+```bash
+colonies function submit --spec ndvi.json --follow
+```
+
+```bash
+colony fs label ls
+```
+
+```bash
+╭────────────────────────────────────────┬───────╮
+│ LABEL                                  │ FILES │
+├────────────────────────────────────────┼───────┤
+│ /openeo/src                            │ 5     │
+│ /openeo/rutvik/images                  │ 8     │
+│ /openeo/rutvik/cloud                   │ 9     │
+│ /openeo/rutvik/ndvi                    │ 2     │
+╰────────────────────────────────────────┴───────╯
+```
+
+## Mailing the results
+The script [mail.py](src/mail.py) finally mails the content of **/openeo/rutvik/ndvi** to a selected user.
+
+```bash
+colonies function submit --spec mail.json --follow
+```
+
+
 
 
 
