@@ -25,7 +25,7 @@ Type the following command to run the workflow:
 colonies workflow submit --spec workflow.json
 ```
 
-Note that the final step requires a valid Google SMTP account and will fail without one. We will explain how to create such an account later in this guide.  Additionally, ensure that executornames are updated to match an existing executor."
+Note that the final step requires a valid Google SMTP account and will fail without one. We will explain how to create such an account later in this guide.  Additionally, ensure that executornames in the JSON files are updated to match an existing executor.
 
 <img src="workflow.png">
 
@@ -33,19 +33,25 @@ Once the workflow is complete, the selected user will receive an email containin
 
 <img src="mail.png">
 
+If you don't have a Google SMTP account, you can run the workflow without sending an email by typing:
+
+```bash
+colonies workflow submit --spec workflow_without_mail.json
+```
+
 # Technical Explanation
 ## Deploying code  
 In a traditional operating system, applications are typically stored on a filesystem, such as a hard drive. Similarly, in ColonyOS, applications like Python scripts are stored on a distributed filesystem called *ColonyFS* and are launched just as they would be in a conventional operating system.
 
 The **src** directories contains the following Python Scripts:
 
-| Filename         | Purpose                                    |
-|------------------|--------------------------------------------|
-| fetch.py         | Fetch images from OpenEO to ColonyFS       |
-| cloud_filter.py  | Calculates cloud mask and coverage         |
-| ndvi.py          | Calculates a NDVI time series              |
-| mail.py          | Mails results to a user                    |
-| parseenv.py      | Example script to explain argument passing |
+| Filename                               | Purpose                                    |
+|----------------------------------------|--------------------------------------------|
+| [fetch.py](src/fetch.py)               | Fetch images from OpenEO to ColonyFS       |
+| [cloud_filter.py](src/cloud_filter.py) | Calculates cloud mask and coverage         |
+| [ndvi.py](src/ndvi.py)                 | Calculates a NDVI time series              |
+| [mail.py](src/mail.py)                 | Mails results to a user                    |
+| [parseenv.py](src/parseenv.py)         | Example script to explain argument passing |
 
 ```bash
 colonies fs sync -l /openeo/src -d ./src --yes
@@ -287,6 +293,20 @@ The script [mail.py](src/mail.py) finally mails the content of **/openeo/rutvik/
 ```bash
 colonies function submit --spec mail.json --follow
 ```
+
+To be able to send a mail, you need to have a Google SMTP account. 
+To get one, you need to:
+1. Create a new Google account, or use an existing one.
+2. Enable two-factor authentication.
+3. Create an [App password](https://myaccount.google.com/apppasswords).
+4. Edit [mail.py](src/mail.py) and set the **smtp_user** and **smtp_password**.
+5. Upload the new code to ColonyFS, by typing:
+
+```bash
+colonies fs sync -l /openeo/src -d ./src --yes
+```
+
+
 
 
 

@@ -2,7 +2,7 @@
     "conditions": {
         "executortype": "container-executor",
         "executornames": [
-            "edge"
+            "dev-docker"
         ],
         "nodes": 1,
         "processespernode": 1,
@@ -48,7 +48,7 @@
                 }
             },
 		    {
-                 "label": "/openeo/rutvik",
+                 "label": "/openeo/rutvik/images",
                  "dir": "/openeo/rutvik/images",
                  "keepfiles": false,
                  "onconflicts": {
