@@ -38,6 +38,9 @@ This repo contains several tutorials to help you get started with ColonyOS, an o
 12. [Anomaly detection example](12-anomaly-detection/README.md)
     - Develop a simple time series anomaly detection service.
 
+13. [Earth observation](13-earth-observation/README.md)
+    - Example how to use ColonyOS to process satellite images from OpenEO.
+
 ---
 
 Contact [johan.kristiansson@ri.se](mailto:johan.kristiansson@ri.se) for more information or assistance.
